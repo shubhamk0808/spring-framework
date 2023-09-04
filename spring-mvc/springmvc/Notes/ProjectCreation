@@ -1,0 +1,64 @@
+Steps to create a Spring MVC project :
+
+Step 1 : Setup a maven project
+	i) Go to eclipse
+	ii) Click on 'Create a Maven project'
+	iii) Select an archetype  -> maven-archetype-webapp
+	iv) Give group id, artifact id
+	[Note : If the above step throws error : "could not resolve archetype org.apache.maven.archetypes webapp" :
+		Go to Windows->Preferences->Maven->Archetype->Add Remote Catalog : https://repo1.maven.org/maven2/archetype-catalog.xml ]
+	v) Open pom.xml, and add the dependency for spring MVC  ( search for spring mvc dependency on google, and copy the dependency from maven central).
+		The above step will add these dependencies to project : spring-webmvc, spring-aop, spring-beans, spring-context, spring-core, spring-jcl, spring-expression, spring-web
+	v) Add and configure a server  (Tomcat) [Note : If using Spring 6, use Java 17 and Tomcat 10 , else use Spring 5, Java 11, Tomcat 9]
+	This will create a Maven project
+
+Step 2: Configure the dispatcher servlet in web.xml
+
+	i) Open web.xml
+	ii) Add two elements inside web-app element: 
+			<servlet>
+				<servlet-name>dispatcher</servlet-name>
+				<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
+			</servlet>
+			
+		  <servlet-mapping>
+				<servlet-name>dispatcher</servlet-name>
+				<url-pattern>/</url-pattern>
+				<!-- Using / means that any incoming request will go to the dispatcher-servlet -->
+		  </servlet-mapping>
+		  
+			*The servlet-mapping element defines a mapping between a servlet and a 
+			url pattern used in: web-app
+			
+Step 3 : Create the spring configuration file
+	This file has to be created directly under WEB-INF folder. While creating this file, naming convention has to be taken care of.
+	As per the naming convention, file name should be <servlet-name>-servlet.xml. For ex., in our case, it will be dispatcher-servlet.xml.
+	Add the required namespaces in that config file.(search for spring configuration file xml example, and copy it).
+	
+Step 4 : Configure the view resolver
+	org.springframework.web.servlet.view.InternalResourceViewResolver :  It is Java class that will resolve the prefix(location), and the suffix(extension) for our view.
+	We will add a bean for this class in spring configuration file. Add two property to that bean : prefix, and suffix
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	
+Step 5 : Create the controller
+	i) Go to src/main/java under Java Resources. Create a Java class. Set the package name accordingly(in our case : com.shubham.spring.springmvc.controllers)
+	ii) Annotate that class with stereotype annotation : @Controller
+	iii) Create a method that will return a ModelAndView. Create the ModelAndView object inside that and set the view name that it has to return within double quote(without any extension).
+	or,
+	iii) Create a method that will return a String. Return view name within double quotes (without any extension).
+	iv) Annotate this method with @RequestMapping, and give a path within double quote, for ex., "/welcome"
+	v) To use the annotation, we need to enable them. Go to dispatcher-servlet.xml, add <context:component-scan base-package="com.shubham.spring.springmvc.controllers"/> before any bean declaration.
+	
+Step 6 : Create the Folder structure and Views
+
+	i) Create the "views" folder inside WEB-INF as we had mentioned the same path /location in prefix)
+	ii) Create a new .jsp file inside that folder.
